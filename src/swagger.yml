@@ -1,8 +1,14 @@
 swagger: "2.0"
 info:
-  description: This is the swagger file that goes with our server code
+  description: "This sensors are located under the Tischkicker Arnim-Kreutzer-Arena. Each sensor measures the distance
+  from it's location to the next obstacle it detects within an typical range of about three meters. Find detailed
+  specification of the sensor here
+  [Grove-Ultrasonic-Ranger](http://wiki.seeed.cc/Grove-Ultrasonic_Ranger/#specification).
+  The sensors are arranged that they detect a typical player standing in front of the table. Hence, the distance
+  measured will be typically below 80cm. Recent tests showed that not every player will be detected by this sensors.
+  The results of all four sensors will give you a probably a valid result."
   version: "1.0.0"
-  title: Swagger REST Article
+  title: Sonic Sensor Service
 consumes:
   - "application/json"
 produces:
@@ -14,21 +20,44 @@ basePath: "/api"
 paths:
   /sonicsensor:
     get:
-      operationId: "sonicsensor.read"
+      operationId: "Responder.read_sensorvalues_from_cache"
       tags:
-        - "People"
-      summary: "The people data structure supported by the server application"
-      description: "Read the list of people"
+        - "Distance"
+      summary: "Returns the measured distance of all four sonic sensors in cm."
+      description: "The sensor values are refreshed every 2-3 seconds. The interval can't be changed nor can it be
+      smaller, since grovepi actually does not support multiple sonic sensors. With a delay it's working anyway."
       responses:
         200:
-          description: "Successful read people list operation"
+          description: "Successful read of distances"
           schema:
-            type: "array"
-            items:
-              properties:
-                fname:
-                  type: "string"
-                lname:
-                  type: "string"
-                timestamp:
-                  type: "string"
+              type: array
+              items:
+                properties:
+                  Sensor1:
+                    type: object
+                    properties:
+                      distance:
+                        type: integer
+                      timestamp:
+                        type: string
+                  Sensor2:
+                    type: object
+                    properties:
+                      distance:
+                        type: integer
+                      timestamp:
+                        type: string
+                  Sensor3:
+                    type: object
+                    properties:
+                      distance:
+                        type: integer
+                      timestamp:
+                        type: string
+                  Sensor4:
+                    type: object
+                    properties:
+                      distance:
+                        type: integer
+                      timestamp:
+                        type: string

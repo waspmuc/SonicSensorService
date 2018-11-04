@@ -1,8 +1,16 @@
-from flask import render_template
-import connexion
-import sensor
 import threading
-from pymemcache.client import base
+
+import connexion
+from flask import render_template
+
+import SonicSensor
+
+
+def start_cyclic_reading_distance():
+    thr = threading.Thread(target=SonicSensor.cyclic_read_distances, args=(), kwargs={})
+    thr.daemon = True
+    thr.start()  # Will run "foo"
+
 
 # Create the application instance
 app = connexion.App(__name__, specification_dir='./')
@@ -10,14 +18,9 @@ app = connexion.App(__name__, specification_dir='./')
 # Read the swagger.yml file to configure the endpoints
 app.add_api('swagger.yml')
 
-thr = threading.Thread(target=sensor.read, args=(), kwargs={})
-thr.daemon = True
-client = base.Client(('localhost', 11211))
-print client.set('some_key', 'some value')
-print client.get('some_key')
+# start cyclic reading of distance values
+start_cyclic_reading_distance()
 
-thr.start() # Will run "foo"
-print "thread.start() called"
 
 # Create a URL route in our application for "/"
 @app.route('/')
@@ -29,6 +32,7 @@ def home():
     """
     return render_template('home.html')
 
+
 # If we're running in stand alone mode, run the application
 if __name__ == '__main__':
-   app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=5000, debug=False)
