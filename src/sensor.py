@@ -1,6 +1,7 @@
 from datetime import datetime
-from pymemcache.client import base
 from time import sleep
+
+from pymemcache.client import base
 
 
 def get_timestamp():
@@ -34,17 +35,19 @@ def read_SonicSensor(ultrasonic_ranger):
             lastValue = ultrasonicRead(ultrasonic_ranger)
             if (lastValue < 180 and lastValue > 1):
                 print get_timestamp()
-                print lastValue
-                # sleep(0.25)
+                print('sensor on port ' + str(ultrasonic_ranger) + ' :' + str(lastValue))
+                sleep(0.8)
                 return lastValue
             else:
                 print "out of range sensor port " + ultrasonic_ranger
 
         except TypeError:
-            print "TypeError sensor port " + str(ultrasonic_ranger)
+            pass
+            # print "TypeError sensor port " + str(ultrasonic_ranger)
             # return "TypeError"
         except IOError:
-            print "IOError"
+            pass
+            # print "IOError"
             # return "IOError"
 
 
@@ -55,17 +58,17 @@ def read():
         # sensor1 = read_SonicSensor(2)
         client = base.Client(('localhost', 11211))
 
-        client.set('sensor1', read_SonicSensor(4))
+        client.set('sensor4', read_SonicSensor(8))
+        client.set('sensor4_timestamp', get_timestamp())
+
+        client.set('sensor1', read_SonicSensor(7))
         client.set('sensor1_timestamp', get_timestamp())
 
-        # client.set('sensor2', read_SonicSensor(2))
-        # client.set('sensor2_timestamp', get_timestamp())
+        client.set('sensor2', read_SonicSensor(3))
+        client.set('sensor2_timestamp', get_timestamp())
 
-        # client.set('sensor3', read_sonicsensor(3))
-        # client.set('sensor3_timestamp', get_timestamp())
-        #
-        # client.set('sensor4', read_sonicsensor(8))
-        # client.set('sensor4_timestamp', get_timestamp())
+        client.set('sensor3', read_SonicSensor(4))
+        client.set('sensor3_timestamp', get_timestamp())
 
         print "sensor values set to memcached"
-        sleep(0.1)
+        # sleep(1)
